@@ -27,5 +27,33 @@ module.exports = {
                 return res.status(401).json({message:"token invalido"})
             }
         }
+    },
+    ensureAuth:(req,res,next)=>{
+        const authHeader  = req.headers.authorization
+        
+        if(!authHeader) {
+            return res.status(401).json({message : "header requerido não informado"})
+        }
+        const token = authHeader.split(' ')[1]
+
+        try {
+            const {id} = jwt.verify(token,JWT_SECRET)
+            const user = users.findById(id)
+
+            if(!user) return res.status(404).json({message : "usuário não encontrado"})
+
+
+            req.autenticatedUser = user
+            next()
+        } catch (error) {
+            return res.status(400).json({message: 'token invalido'})
+        }
+    },
+    ensureAdmin:(req,res,next)=>{
+        if(req.autenticatedUser?.role ==='admin' ){
+            next()
+        }else{
+            res.status(403).json({message: 'permissão negada'})
+        }
     }
 }
