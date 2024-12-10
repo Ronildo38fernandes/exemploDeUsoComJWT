@@ -13,4 +13,7 @@ router.post('/auth/login',authController.login)
 router.get('/welcome',optionalAuth,welcomeController.welcome)
 
 router.get('/users',ensureAuth,ensureAdmin, usersControllers.index)
+router.get('/users/:id',ensureAuth,ensureAdmin,usersControllers.show)
+router.post('/users',ensureAuth,ensureAdmin,usersControllers.save)
+router.delete('/users/:id',ensureAuth,ensureAdmin, usersControllers.delete)
 module.exports = router
